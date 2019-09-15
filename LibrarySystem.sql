@@ -37,9 +37,12 @@ insert into Users values(1,  'Lyla',  'Data Analytics',  '0210000019',  'Suva', 
 insert into Users values(2,  'Matthew',  'Business Intelligence',  '0210000020', 'Auckland', 2019) 
                    
 /*Show table of staff*/
-select Name,Division,Contact,Address,Year from Users where Roles_ID>1
+select Name,Division,Contact,Address,Year 
+from Users 
+where Roles_ID>1
 /*Show name and id of all users */
-select Name,User_Id from Users
+select Name,User_Id 
+from Users
 
 
 /*Create Book Table*/
@@ -161,10 +164,17 @@ Insert into Book_Issues  Values ('2019-01-02','2019-01-10',2,2,3,'True')
 
 /*Show record of books issued by user and book*/
 
-select Users.Stu_Id,Books.Book_Name,Books.Author_Name,Book_Issues.Date_Of_Issue,Date_Of_Return from Users inner join Book_Issues on Users.Stu_Id=Book_Issues.Stu_Id inner join Books on Books.Book_Id=Book_Issues.Book_Id
+select Users.Stu_Id,Books.Book_Name,Books.Author_Name,Book_Issues.Date_Of_Issue,Date_Of_Return 
+from Users 
+inner join Book_Issues on Users.Stu_Id=Book_Issues.Stu_Id 
+inner join Books on Books.Book_Id=Book_Issues.Book_Id
 
 
-select Users.[User_Name],Books.Book_Name,Book_Issues.Date_Of_Issue,Book_Issues.Date_Of_Return from Users inner join Book_Issues on Users.Stu_Id=Book_Issues.Stu_Id inner join Books on Books.Book_Id=Book_Issues.Book_Id inner join category on category.category_Id=Book_Issues.category_Id
+select Users.[User_Name],Books.Book_Name,Book_Issues.Date_Of_Issue,Book_Issues.Date_Of_Return 
+from Users 
+inner join Book_Issues on Users.Stu_Id=Book_Issues.Stu_Id 
+inner join Books on Books.Book_Id=Book_Issues.Book_Id 
+inner join category on category.category_Id=Book_Issues.category_Id
 
 /*Create record of late fees*/
 
@@ -177,7 +187,10 @@ Bk_Issue_Id int
 
 /*Show table of late fees for the books that have a fee againsst them */
 
-select Books.Book_Name,Books.Author_Name,Book_Issues.Date_Of_Issue,Book_Issues.Date_Of_Return from Books inner join Due_Date_Fee on Books.Book_Id=Due_Date_Fee.Book_Id inner join Book_Issues on Book_Issues.Bk_Issue_Id=Due_Date_Fee.Bk_Issue_Id
+select Books.Book_Name,Books.Author_Name,Book_Issues.Date_Of_Issue,Book_Issues.Date_Of_Return 
+from Books 
+inner join Due_Date_Fee on Books.Book_Id=Due_Date_Fee.Book_Id 
+inner join Book_Issues on Book_Issues.Bk_Issue_Id=Due_Date_Fee.Bk_Issue_Id
 
 /*initial record of due date fees*/
 
@@ -208,7 +221,10 @@ Book_Id int
 
 /*Show inventory of books by category*/
 
-select Books.Book_Name,category.Book_Category,Stocks.Stock from Stocks inner join Books on Stocks.Book_id=Books.Book_id inner join category on Stocks.Stock_ID=category.category_Id
+select Books.Book_Name,category.Book_Category,Stocks.Stock 
+from Stocks 
+inner join Books on Stocks.Book_id=Books.Book_id 
+inner join category on Stocks.Stock_ID=category.category_Id
 
 select * from Stocks
 
@@ -216,31 +232,51 @@ insert into Stocks values(1,1),(2,2),(3,3)
 
 /*Show inventory of books*/
 
-select Books.Book_Name,Books.Author_Name,Stocks.Stock from Books inner join Stocks on Stocks.Book_id=Books.Book_Id
+select Books.Book_Name,Books.Author_Name,Stocks.Stock 
+from Books 
+inner join Stocks on Stocks.Book_id=Books.Book_Id
 
 /*Show users with their roles*/
 
 
-select  r.Role_Name,Name,Division,Contact,Address,Year from users u inner join Roles  r on r.Roles_ID = u.roles_id where u.roles_id>1
+select  r.Role_Name,Name,Division,Contact,Address,Year 
+from users u 
+inner join Roles  r on r.Roles_ID = u.roles_id 
+where u.roles_id>1
 
 /*Show book issue information*/
 
-select Books.Book_Name,[Users].Name As'Student_Name',category.Book_Category,CONVERT(varchar,Book_Issues.Date_Of_Issue,103) as Issue_Date from Book_Issues inner join Books on Book_Issues.Book_Id=Books.Book_Id inner join category on category.category_Id=Book_Issues.category_Id inner join [Users] on [Users].[User_Id]=Book_Issues.[User_Id]
+select Books.Book_Name,[Users].Name As'Student_Name',category.Book_Category,CONVERT(varchar,Book_Issues.Date_Of_Issue,103) as Issue_Date 
+from Book_Issues 
+inner join Books on Book_Issues.Book_Id=Books.Book_Id 
+inner join category on category.category_Id=Book_Issues.category_Id 
+inner join [Users] on [Users].[User_Id]=Book_Issues.[User_Id]
 
 /*Book issues by division for users with more than one book issues*/
-SELECT Users.User_id, Users.division, Book_Issues.Book_Id, count(Book_Issues.Book_Id) AS count FROM Users JOIN Book_Issues ON Users.User_id = Book_Issues.User_id GROUP BY division HAVING count( Users.User_id ) > 1;
+SELECT Users.User_id, Users.division, Book_Issues.Book_Id, count(Book_Issues.Book_Id) AS count 
+FROM Users 
+JOIN Book_Issues ON Users.User_id = Book_Issues.User_id 
+GROUP BY division 
+HAVING count( Users.User_id ) > 1;
 
 /*Check the books with the highest amount of fees*/
-select Fee_Amount, Bk_Issue_Id, DENSE_RANK() OVER (ORDER BY Fee_Amount DESC) AS RANK from Due_Date_Fee
+select Fee_Amount, Bk_Issue_Id, DENSE_RANK() OVER (ORDER BY Fee_Amount DESC) AS RANK 
+from Due_Date_Fee
 
 /* Total fees due*/
-select sum(case when Fee_Amount >0 then Fee_Amount else 0 end) AS Overdue from Due_Date_Fee;
+select sum(case when Fee_Amount >0 then Fee_Amount else 0 end) AS Overdue 
+from Due_Date_Fee;
 
 /* 5th highest Due date fee amount*/ 
-SELECT TOP (1) Fee_Amount FROM(SELECT DISTINCT TOP (5) Fee_Amount FROM Due_Date_Fee ORDER BY Fee_Amount DESC) AS Fee ORDER BY Fee_Amount
+SELECT TOP (1) Fee_Amount 
+FROM(SELECT DISTINCT TOP (5) Fee_Amount 
+      FROM Due_Date_Fee 
+      ORDER BY Fee_Amount DESC) AS Fee 
+ORDER BY Fee_Amount
 
 /* split fee into dollar and cents*/
-select Fee_Amount, trunc(Fee_Amount) as Dollars, nvl(100*(Fee_Amount - trunc(Fee_Amount)), 0) as Cents from Due_Date_Fee;
+select Fee_Amount, trunc(Fee_Amount) as Dollars, nvl(100*(Fee_Amount - trunc(Fee_Amount)), 0) as Cents 
+from Due_Date_Fee;
 
 
 select * from Users 
